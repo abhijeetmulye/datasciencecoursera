@@ -44,5 +44,19 @@ modelFit3 = train(type ~., data = training, method = "glm")
 
 
 
+# K-fold sampling
+
+folds = createFolds(y= spam$type, k=10, list=T, returnTrain=T)
+str(folds)
+
+sapply(folds, length)
+
+# PCA
+
+modelPCA = train(training$type~., method="glm", preProcess="pca", data= training)
+confusionMatrix(testing$type, predict(modelPCA, newdata=testing))
+
+plot(training$age, modelPCA$fitted)
+
 
 
