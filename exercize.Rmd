@@ -1,0 +1,54 @@
+---
+title: "Exercize"
+output: html_document
+---
+
+# Predicting exercise class 
+
+```{r}
+rm(list=ls())
+library(caret)
+library(randomForest)
+library(forecast)
+library(e1071)
+
+training = read.csv("pml-training.csv")
+testing = read.csv("pml-testing.csv")
+
+## Feature selection
+
+# Removing variables such as names, timestamps etc
+tr = training[,8:160]
+
+sub = createDataPartition(y=tr$classe, p=0.7, list=F)
+tr1 = tr[sub,]
+validation = tr[-sub,]
+
+# Remove NAs
+tr1[is.na(tr1)] = 0
+validation[is.na(validation)] = 0
+
+# Remove variables with no variation
+rem = nearZeroVar(tr1)
+tr1 = tr1[,-rem]
+rem = nearZeroVar(validation)
+validation = validation[,-rem]
+
+
+## Applying algorithm
+
+# Train random forests
+rfModel = randomForest(tr1[,1:52] ,tr1$classe, do.trace=T)
+
+# In sample accuracy - Perfect
+confusionMatrix(predict(rfModel,newdata=tr1), tr1$classe)
+
+
+## Estimating Out of Sample Error
+
+#Out of sample accuracy - 0.9951
+confusionMatrix(predict(rfModel,newdata=validation), validation$classe)
+
+```
+
+## Random Forest can predict Exercise class with OOB accuracy of 0.9951  
