@@ -53,6 +53,19 @@ sapply(folds, length)
 
 # PCA
 
+# Methods like Neural Networks often use gradient descent derived methods. In theory if you had
+# infinite number of iterations and retries, the algorithm is going to converge to the same result 
+# independent of coordinate system. Neural Networks do not like the "curse of dimensionality" and so
+# using PCA to reduce the dimension of the data can improve speed of convergence and quality 
+# of results. The transformation of the data, by centering, rotating and scaling informed by PCA
+# can improve the convergence time and the quality of results.
+# 
+# In theory the PCA makes no difference, but in practice it improves rate of training, simplifies
+# the required neural structure to represent the data, and results in systems that better 
+# characterize the "intermediate structure" of the data instead of having to account for multiple 
+# scales - it is more accurate.
+
+
 modelPCA = train(training$type~., method="glm", preProcess="pca", data= training)
 confusionMatrix(testing$type, predict(modelPCA, newdata=testing))
 
